@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,8 +35,24 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        // $this->reportable(function (Throwable $e) {
+        //     return response()->json([
+        //         'message' => $e->getMessage(),
+        //         'code' => $e->getCode(),
+        //     ], $e->getCode());
+        // });
+
+        $this->renderable(function (ValidationException $e, $request) {
+            if ($request->is('api/*')) {
+                $errors_string = '';
+                foreach ($e->errors() as $error) {
+                    $errors_string .= $error[0] . "\n";
+                }
+                return response()->json([
+                    'success' => false,
+                    'errors'=> $errors_string,
+                ], 422);
+            }
         });
     }
 }

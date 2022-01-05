@@ -12,9 +12,17 @@ class EventController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+
     public function index()
     {
-        //
+        $events = Event::all();
+        return response()->json(['success'=>true, 'data'=> $events]);
+        // return view('event.index', compact('events'));
     }
 
     /**
