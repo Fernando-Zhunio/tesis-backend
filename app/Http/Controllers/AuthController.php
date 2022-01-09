@@ -23,18 +23,20 @@ class AuthController extends Controller
 
         $credentials = request(['email', 'password']);
 
-        if (!auth()::attempt($credentials))
+        if (!auth()::attempt($credentials)) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
+        }
 
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
 
         $token = $tokenResult->token;
-        if ($request->remember_me)
+        if ($request->remember_me) {
             $token->expires_at = Carbon::now()->addWeeks(50);
-        $token->save();
+            $token->save();
+        }
 
         return response()->json([
             'user' => $user,
@@ -62,7 +64,4 @@ class AuthController extends Controller
             'message' => 'Successfully created user!'
         ], 201);
     }
-
-
-
 }

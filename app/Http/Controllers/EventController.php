@@ -21,7 +21,7 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::all();
-        return response()->json(['success'=>true, 'data'=> $events]);
+        return response()->json(['success' => true, 'data' => $events]);
         // return view('event.index', compact('events'));
     }
 
