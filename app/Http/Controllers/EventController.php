@@ -14,15 +14,14 @@ class EventController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
 
     public function index()
     {
-        $events = Event::all();
+        $events = Event::paginate();
         return response()->json(['success' => true, 'data' => $events]);
-        // return view('event.index', compact('events'));
     }
 
     /**
