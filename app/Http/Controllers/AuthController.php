@@ -23,7 +23,7 @@ class AuthController extends Controller
 
         $credentials = request(['email', 'password']);
 
-        if (!auth()::attempt($credentials)) {
+        if (!auth()->attempt($credentials)) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
@@ -48,15 +48,20 @@ class AuthController extends Controller
 
     public function signUp(Request $request)
     {
+        $dateMayor =  Carbon::now()->subYears(18);
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
+            'birthday' => 'required|date|before:'.$dateMayor,
+            'is_student' => 'required|boolean',
             'password' => 'required|string|confirmed'
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'birthday' => Carbon::parse($request->birthday)->format('Y-m-d H:i:s'),
+            'is_student' => $request->is_student,
             'password' => bcrypt($request->password)
         ]);
 

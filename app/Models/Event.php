@@ -14,12 +14,17 @@ class Event extends Model
 
     public function users()
     {
-        return $this->belongsTo(User::class,'event_id', 'user_id','event_user');
+        return $this->belongsTo(User::class, 'event_id', 'user_id', 'event_user');
     }
 
     public $cast = [
-        'position' => 'json',
+        'position' => 'array',
     ];
+
+    public function getPositionAttribute($details)
+    {
+        return json_decode($details, true);
+    }
 
     // public function event_user()
     // {

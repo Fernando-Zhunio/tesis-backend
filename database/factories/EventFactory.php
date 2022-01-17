@@ -17,7 +17,7 @@ class EventFactory extends Factory
             'name' => $this->faker->name,
             'description' => $this->faker->text,
             'image' => $this->faker->imageUrl,
-            'position' => $this->faker->address,
+            'position' => '['.$this->faker->latitude.','.$this->faker->longitude.']',
             'status' => $this->faker->boolean,
             'start_date' => $this->faker->dateTime,
             'end_date' => $this->faker->dateTime,
