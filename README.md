@@ -51,7 +51,7 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions). 
 
 ## Code of Conduct
 
@@ -72,3 +72,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 2. correr comando composer install
 3. correr comando php artisan migrate
 4. correr comando php artisan passport:install
+5. install heroku
+5.1 add remote command: heroku git:remote -a tesis-v1
+5.2 push remote heroku: git push heroku master
