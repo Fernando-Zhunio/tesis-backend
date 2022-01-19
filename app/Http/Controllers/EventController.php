@@ -14,7 +14,9 @@ class EventController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('role:admin');
+        $this->middleware('auth:api')->only('index');
+        $this->middleware('auth:web')->except('index');
     }
 
 
@@ -22,6 +24,12 @@ class EventController extends Controller
     {
         $events = Event::paginate();
         return response()->json(['success' => true, 'data' => $events]);
+    }
+
+    public function indexOnlyAdmins()
+    {
+        $events = Event::paginate();
+        return view('events.index', compact('events'));
     }
 
     /**
@@ -64,7 +72,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        return view('events.edit', compact('event'));
     }
 
     /**

@@ -16,3 +16,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Auth::routes();
+Route::get('/login',[App\Http\Controllers\Auth\LoginController::class,'showLoginForm'])->name('show-login');
+Route::post('/login',[App\Http\Controllers\Auth\LoginController::class,'login'])->name('login');
+Route::post('/logout',[App\Http\Controllers\Auth\LoginController::class,'logout'])->name('logout');
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+#region eventos
+Route::get('/events', [App\Http\Controllers\EventController::class, 'indexOnlyAdmins'])->name('events.index');
+Route::get('/events/create', [App\Http\Controllers\EventController::class, 'create'])->name('events.create');
+Route::get('/events/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->name('events.edit');
+Route::put('/events/{event}/update', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
+#endregion eventos
