@@ -20,7 +20,7 @@
                 @foreach ($events as $event)
                     <div class="col-md-4 col-12">
                         <div class="card mb-4 shadow-sm">
-                            <img class="card-img-top" src="{{ $event->image }}" alt="Card image cap">
+                            <img class="card-img-top" src="{{ $event?->image ?? asset('assets/images/background-default.jpg') }}" alt="Card image cap">
                             <div class="card-body">
                                 <p
                                     class="card-text

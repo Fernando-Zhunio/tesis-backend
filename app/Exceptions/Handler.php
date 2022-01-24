@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
         // });
 
         $this->renderable(function (ValidationException $e, $request) {
-            if ($request->is('api/*')) {
+            if ($request->is('api/*') || $request->wantsJson()) {
                 $errors_string = '';
                 foreach ($e->errors() as $error) {
                     $errors_string .= $error[0] . "\n";

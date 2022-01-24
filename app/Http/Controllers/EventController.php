@@ -14,7 +14,7 @@ class EventController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin');
+        // $this->middleware('role:admin');
         $this->middleware('auth:api')->only('index');
         $this->middleware('auth:web')->except('index');
     }
@@ -28,7 +28,7 @@ class EventController extends Controller
 
     public function indexOnlyAdmins()
     {
-        $events = Event::paginate();
+        $events = Event::orderBy('created_at', 'desc')->paginate();
         return view('events.index', compact('events'));
     }
 
@@ -39,7 +39,7 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        return view('events.createOrEdit');
     }
 
     /**
@@ -50,7 +50,38 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
+            'dates' => 'required|array',
+            'dates.*' => 'required|date',
+            'image' => 'file|image|mimes:jpeg,png,jpg|max:2048',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+            'is_active' => 'required|in:true,false,0,1',
+        ], $request->all());
+
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $name = time().'.'.$image->getClientOriginalExtension();
+            $path = $image->storeAs('images', $name);
+            // $destinationPath = public_path('/images');
+            // $image->move($destinationPath, $name);
+        }
+
+        $event = Event::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name ?? null,
+            'position' => '['.$request->lng.','. $request->lat.']',
+            'status' => (bool)$request->is_active,
+            'start_date' => $request->dates[0],
+            'end_date' => $request->dates[1],
+        ]);
+
+        // return redirect()->route('events.index');
+
+        return response()->json(['success' => true, 'data' => $request->all()]);
     }
 
     /**
@@ -72,7 +103,10 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        return view('events.edit', compact('event'));
+        if(request()->wantsJson()){
+            return response()->json(['success' => true, 'data' => $event]);
+        }
+        return view('events.createOrEdit', compact('event'));
     }
 
     /**
@@ -84,7 +118,38 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
+            'dates' => 'required|array',
+            'dates.*' => 'required|date',
+            'image' => 'file|image|mimes:jpeg,png,jpg|max:2048',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+            'is_active' => 'required|in:true,false,0,1',
+        ], $request->all());
+
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $name = time().'.'.$image->getClientOriginalExtension();
+            $path = $image->storeAs('images', $name);
+            // $destinationPath = public_path('/images');
+            // $image->move($destinationPath, $name);
+        }
+
+        $event = $event->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name ?? null,
+            'position' => '['.$request->lng.','. $request->lat.']',
+            'status' => (bool)$request->is_active,
+            'start_date' => $request->dates[0],
+            'end_date' => $request->dates[1],
+        ]);
+
+        // return redirect()->route('events.index');
+
+        return response()->json(['success' => true, 'data' => $request->all()]);
     }
 
     /**

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('home');
 });
 
 // Auth::routes();
@@ -28,5 +28,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/events', [App\Http\Controllers\EventController::class, 'indexOnlyAdmins'])->name('events.index');
 Route::get('/events/create', [App\Http\Controllers\EventController::class, 'create'])->name('events.create');
 Route::get('/events/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->name('events.edit');
-Route::put('/events/{event}/update', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
+Route::put('/events/{event}', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
+Route::post('/events', [App\Http\Controllers\EventController::class, 'store'])->name('events.store');
 #endregion eventos

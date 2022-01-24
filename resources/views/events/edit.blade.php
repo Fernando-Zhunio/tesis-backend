@@ -11,6 +11,9 @@
         .card img {
             border-radius: 20px 20px 0px 0px;
         }
+        .form-group {
+            margin-top: 5px;
+        }
 
     </style>
 
@@ -21,29 +24,27 @@
 @section('content')
     <div class="container">
         <div class="display-3">Eventos Editando</div>
-        <form action="{{ route('events.update',['event' => $event->id]) }}">
+
+        <form action="{{ route('events.update', ['event' => $event->id]) }}">
             <div class="form-group">
                 <label for="name">Nombre</label>
-                <input type="text" id="name" class="form-control" name="name" value="{{ $event->name }}">
+                <input type="text" id="name" class="form-control" name="name" value="{{ $event?->name }}">
             </div>
             <div class="form-group">
                 <label for="description">Descripcion</label>
-                <textarea name="description" id="description" cols="30" rows="10"
-                    class="form-control">{{ $event->description }}</textarea>
+                <textarea name="description" id="description" cols="30" rows="5"
+                    class="form-control">{{ $event?->description }}</textarea>
             </div>
-            <div id='map' style='width: 400px; height: 300px;'></div>
+            <div>
+                <div class="my-2">Seleccione una posicion del evento</div>
+                <div id='map' style='width: 100%; height: 500px;' class="rounded-20 shadow"></div>
+            </div>
+            <button type="submit" class="btn btn-primary my-2">Guardar </button>
         </form>
-
+        
     </div>
 @endsection
 
 @section('scripts')
-    <script>
-        mapboxgl.accessToken =
-            'pk.eyJ1IjoiZmVybmFuZG8xOTkxIiwiYSI6ImNrOGRlcHF2czBxd28zbW5wa3hsaTZnaWcifQ.g1IjAr-9rd65D5W93ftlew';
-        var map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11'
-        });
-    </script>
+    <script src="{{asset('js/event.js')}}"></script>
 @endsection
