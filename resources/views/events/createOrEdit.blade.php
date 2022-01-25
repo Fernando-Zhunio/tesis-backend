@@ -29,8 +29,13 @@
 @endsection
 @section('content')
     <div id="app" class="container">
+        @isset($event)
+            <div class="display-3">Editando Evento</div>
+            <create-events-component :event_id="{{ $event->id }}"></create-events-component>
+        @else
         <div class="display-3">Creando Evento</div>
-        <create-events-component :event_id="{{ $event->id }}"></create-events-component>
+            <create-events-component></create-events-component>
+        @endisset
     </div>
 @endsection
 
