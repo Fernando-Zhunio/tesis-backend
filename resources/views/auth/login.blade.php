@@ -1,16 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
-
+<div  style="background-image: url('{{asset('assets/images/background-login.jpg')}}'); background-size:cover">
+    <div class="container">
+      <div class="row justify-content-center center vh-100">
+        <div class="col-md-6">
+            <div class="card border-0 shadow rounded-20">
                 <div class="card-body">
+                    <div class="fs-2 fw-bold mb-4 border-bottom">Inicio de sesion</div>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
-
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail Address') }}</label>
 
@@ -54,7 +53,7 @@
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
+                                    Iniciar sesion
                                 </button>
 
                                 @if (Route::has('password.request'))
@@ -68,6 +67,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="text-white text-center">
+                <div><h1>Eventos UG </h1></div>
+                <p>Evento de la universidad de Guayaquil, con guia de realidad virtual y posicionamiento geografico</p>
+                <img src="{{asset('assets/images/login-img.svg')}}" alt="Imagen de login">
+            </div>
+        </div>
+    </div>  
     </div>
+    
 </div>
 @endsection

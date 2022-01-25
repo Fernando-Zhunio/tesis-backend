@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +25,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $events = Event::orderBy('created_at', 'desc')->paginate();
+        $events_count = Event::count();
+        $events_disabled_count = Event::where('status', 0)->count();
+        $events_enabled_count = Event::where('status', 1)->count();
+        $users_count = User::count();
+        return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count'));
     }
 }

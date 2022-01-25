@@ -6,5 +6,9 @@
 }
 
 .rounded-20 {
-  border-radius: 20px;
+  border-radius: 20px !important;
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
 }

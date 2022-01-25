@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -30,6 +31,7 @@ class EventController extends Controller
     {
         $events = Event::orderBy('created_at', 'desc')->paginate();
         return view('events.index', compact('events'));
+
     }
 
     /**

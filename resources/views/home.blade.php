@@ -27,8 +27,48 @@
             </div>
         </div> 
     </div> --}}
-        <h1 class="display-2">Bienvenido a UG Events AR</h1>
+        <h1 class="display-2 fw-normal">Bienvenido a UG Events AR</h1>
         <div>
+            <div class="row">
+                <div class="col-md-3 text-center card-body shadow rounded-20">
+                    <h3 class="border-bottom">Total de eventos</h3>
+                    <div class="center">
+                        <i class="fas fa-bell fa-4x"></i>
+                        <span >&nbsp;&nbsp;&nbsp;</span>
+                        <span class="fs-1">{{$events_count}}</span>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                     <div class="card-body shadow rounded-20">
+                        <h3 class="border-bottom">Eventos Activos</h3>
+                        <div class="center">
+                            <i class="far fa-bell fa-4x"></i>
+                            <span >&nbsp;&nbsp;&nbsp;</span>
+                            <span class="fs-1">{{$events_enabled_count}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                     <div class="card-body shadow rounded-20">
+                        <h3 class="border-bottom">Eventos Inactivos </h3>
+                        <div class="center">
+                            <i class="far fa-bell-slash fa-4x"></i>
+                            <span >&nbsp;&nbsp;&nbsp;</span>
+                            <span class="fs-1">{{$events_disabled_count}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="card-body shadow rounded-20">
+                        <h3 class="border-bottom">Total de usuarios</h3>
+                        <div class="center">
+                            <i class="fas fa-users fa-4x"></i>
+                            <span >&nbsp;&nbsp;&nbsp;</span>
+                            <span class="fs-1">{{$users_count}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-4 col-12">
                     <a href="{{ route('events.create') }}" style="text-decoration: none">
