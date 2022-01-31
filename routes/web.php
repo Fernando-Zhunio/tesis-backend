@@ -30,4 +30,5 @@ Route::get('/events/create', [App\Http\Controllers\EventController::class, 'crea
 Route::get('/events/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->name('events.edit');
 Route::put('/events/{event}', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
 Route::post('/events', [App\Http\Controllers\EventController::class, 'store'])->name('events.store');
+
 #endregion eventos

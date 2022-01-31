@@ -26,10 +26,6 @@ class Event extends Model
         return json_decode($details, true);
     }
 
-    // public function event_user()
-    // {
-    //     return $this->hasMany(EventUser::class);
-    // }
 
 
 }

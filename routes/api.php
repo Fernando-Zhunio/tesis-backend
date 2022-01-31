@@ -32,4 +32,5 @@ Route::prefix('events')->group(function () {
     Route::post('/', 'EventController@store');
     Route::put('/{id}', 'EventController@update');
     Route::delete('/{id}', 'EventController@delete');
+    Route::get('{event}/waypoints', [App\Http\Controllers\EventController::class, 'getWaypoints'])->name('events.waypoints');
 });

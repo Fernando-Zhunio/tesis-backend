@@ -38,7 +38,7 @@ class AuthController extends Controller
             $token->save();
         }
 
-        $user->assigRole('user');
+        $user->assignRole('user');
 
         return response()->json([
             'user' => $user,

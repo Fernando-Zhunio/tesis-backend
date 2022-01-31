@@ -4,7 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class EventController extends Controller
 {
@@ -16,8 +22,8 @@ class EventController extends Controller
     public function __construct()
     {
         // $this->middleware('role:admin');
-        $this->middleware('auth:api')->only('index');
-        $this->middleware('auth:web')->except('index');
+        $this->middleware('auth:api')->only(['index, getWaypoints']);
+        $this->middleware('auth:web')->except(['index', 'getWaypoints']);
     }
 
 
@@ -31,7 +37,6 @@ class EventController extends Controller
     {
         $events = Event::orderBy('created_at', 'desc')->paginate();
         return view('events.index', compact('events'));
-
     }
 
     /**
@@ -65,8 +70,10 @@ class EventController extends Controller
 
         if($request->hasFile('image')){
             $image = $request->file('image');
-            $name = time().'.'.$image->getClientOriginalExtension();
-            $path = $image->storeAs('images', $name);
+            $file_name = $this->addFile($image);
+
+            // $name = time().'.'.$image->getClientOriginalExtension();
+            // $path = $image->storeAs('images', $name);
             // $destinationPath = public_path('/images');
             // $image->move($destinationPath, $name);
         }
@@ -74,11 +81,12 @@ class EventController extends Controller
         $event = Event::create([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $name ?? null,
+            'image' => $file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->dates[0],
             'end_date' => $request->dates[1],
+            
         ]);
 
         // return redirect()->route('events.index');
@@ -133,8 +141,9 @@ class EventController extends Controller
 
         if($request->hasFile('image')){
             $image = $request->file('image');
-            $name = time().'.'.$image->getClientOriginalExtension();
-            $path = $image->storeAs('images', $name);
+            $file_name = $this->addFile($image);
+            // $name = time().'.'.$image->getClientOriginalExtension();
+            // $path = $image->storeAs('images', $name);
             // $destinationPath = public_path('/images');
             // $image->move($destinationPath, $name);
         }
@@ -142,7 +151,7 @@ class EventController extends Controller
         $event = $event->update([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $name ?? null,
+            'image' => $file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->dates[0],
@@ -163,5 +172,26 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         //
+    }
+
+    public function addFile(UploadedFile  $file,  string $disk = 'public', string $dir = '/images'){
+        $file_name =  $dir . "/" . Str::random(30) . time() . "." . $file->guessClientExtension();
+        Storage::disk($disk)->put($file_name, $file->getContent());
+        return $file_name;
+    }
+
+    public function getWaypoints(Request $request,Event $event){
+        $request->validate([
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+        ], $request->all());
+        $lng = $request->lng;
+        $lat = $request->lat;
+        $token= env('TOKEN_MAPBOX');
+        $position = $event->position;
+        $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng,$lat;$position[0],$position[1]?access_token=$token&geometries=geojson&overview=full";
+        $responde_mapbox = Http::get($url)->json();
+        $waypoints = $responde_mapbox['routes'][0]['geometry']['coordinates'];
+        return response()->json(['success' => true, 'data' => $waypoints]);
     }
 }

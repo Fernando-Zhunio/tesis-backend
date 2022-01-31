@@ -139,6 +139,7 @@ export default {
   data() {
     return {
       center: [-79.89844529968079, -2.181452614962342],
+      // center: [-79.952899, -2.117987],
       map: null,
       name: null,
       description: null,
@@ -184,31 +185,89 @@ export default {
       .setLngLat(this.center)
       .addTo(this.map);
     this.marker.on("dragend", this.onDragEnd);
+
     this.dates = new AirDatepicker("#dates", {
       locale: localeEs,
       range: true,
       minDate: new Date(),
       multipleDatesSeparator: " - ",
     });
-    // let notifier = new AWN(globalOptions)
+    this.addMarker();
   },
   methods: {
-    getEvent(){
-        axios.get(`/events/${this.event_id}/edit`).then((response) => {
-            console.log(response.data);
-            const { name, description, image, status, start_date, end_date, position } = response.data.data;
-            this.name = name;
-            this.description = description;
-            this.image.url = image || this.url_img_default;
-            this.is_active = status;
-            this.dates.selectDate([start_date, end_date]);
-            this.lat = position[1];
-            this.lng = position[0];
-            this.center = [this.lng, this.lat];
-            this.marker.setLngLat(this.center);
-        });
-        },
-     
+    addMarker() {
+      const coordinates = [
+         [
+            -79.896315,
+            -2.181886
+        ],
+        [
+            -79.896563,
+            -2.181976
+        ],
+        [
+            -79.897145,
+            -2.182231
+        ],
+        [
+            -79.897172,
+            -2.182176
+        ],
+        [
+            -79.897332,
+            -2.181813
+        ],
+        [
+            -79.89735,
+            -2.181749
+        ],
+        [
+            -79.897319,
+            -2.181692
+        ],
+        [
+            -79.897171,
+            -2.181619
+        ],
+        [
+            -79.896875,
+            -2.181494
+        ]
+      ];
+      coordinates.forEach((coordinate) => {
+        new mapboxgl.Marker({
+          draggable: true,
+        })
+          .setLngLat(coordinate)
+          .addTo(this.map);
+        console.log(coordinate);
+        // marker.on("dragend", this.onDragEnd);
+      });
+    },
+    getEvent() {
+      axios.get(`/events/${this.event_id}/edit`).then((response) => {
+        console.log(response.data);
+        const {
+          name,
+          description,
+          image,
+          status,
+          start_date,
+          end_date,
+          position,
+        } = response.data.data;
+        this.name = name;
+        this.description = description;
+        this.image.url = image || this.url_img_default;
+        this.is_active = status;
+        this.dates.selectDate([start_date, end_date]);
+        this.lat = position[1];
+        this.lng = position[0];
+        this.center = [this.lng, this.lat];
+        this.marker.setLngLat(this.center);
+      });
+    },
+
     fly() {
       this.center = [this.lng, this.lat];
       this.map.flyTo({
@@ -218,6 +277,7 @@ export default {
       this.marker.setLngLat(this.center);
       console.log(this.dates);
     },
+
     onDragEnd() {
       const lngLat = this.marker.getLngLat();
       console.log(`Longitude: ${lngLat.lng}<br />Latitude: ${lngLat.lat}`);
@@ -301,7 +361,7 @@ export default {
       if (this.image.base64 != null) {
         formData.append("image", this.image.base64);
       }
-      if(this.isEdit){
+      if (this.isEdit) {
         formData.append("_method", "PUT");
       }
       return formData;
