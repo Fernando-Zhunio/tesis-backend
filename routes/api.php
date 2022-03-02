@@ -26,6 +26,8 @@ Route::prefix('auth')->group(function () {
     Route::get('me', 'AuthController@me');
 });
 
+Route::get('home', 'HomeController@indexApi')->name('homeApi');
+
 Route::prefix('events')->group(function () {
     Route::get('', 'EventController@index');
     Route::get('/{id}', 'EventController@show');
@@ -33,4 +35,5 @@ Route::prefix('events')->group(function () {
     Route::put('/{id}', 'EventController@update');
     Route::delete('/{id}', 'EventController@delete');
     Route::get('{event}/waypoints', [App\Http\Controllers\EventController::class, 'getWaypoints'])->name('events.waypoints');
+    Route::get('{event}/favorite', [App\Http\Controllers\EventController::class, 'toggleFavorite'])->name('events.toggle.favorite');
 });

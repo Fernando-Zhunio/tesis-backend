@@ -181,17 +181,50 @@ class EventController extends Controller
     }
 
     public function getWaypoints(Request $request,Event $event){
+        // return $event;
         $request->validate([
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
         ], $request->all());
-        $lng = $request->lng;
-        $lat = $request->lat;
+        $lng_start = $request->lng;
+        $lat_start = $request->lat;
         $token= env('TOKEN_MAPBOX');
-        $position = $event->position;
-        $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng,$lat;$position[0],$position[1]?access_token=$token&geometries=geojson&overview=full";
+        $lng_end = $event->position[0];
+        $lat_end = $event->position[1];
+        $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_start,$lat_start;$lng_end,$lat_end?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
         $waypoints = $responde_mapbox['routes'][0]['geometry']['coordinates'];
         return response()->json(['success' => true, 'data' => $waypoints]);
+    }
+
+    public function getWaypointsForMap(Request $request,Event $event){
+        // return $event;
+        $request->validate([
+            'lat_o' => 'required|numeric',
+            'lng_o' => 'required|numeric',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+
+        ], $request->all());
+        $lng_o = $request->lng_o;
+        $lat_o = $request->lat_o;
+        $token= env('TOKEN_MAPBOX');
+        $lat = $request->lat;
+        $lng = $request->lng;
+        $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
+        $responde_mapbox = Http::get($url)->json();
+        $waypoints = $responde_mapbox['routes'][0]['geometry']['coordinates'];
+        return response()->json(['success' => true, 'data' => $waypoints]);
+    }
+
+    public function toggleFavorite(Request $request, Event $event){
+        // $request->validate([
+        //     'user_id' => 'required|exists:users,id',
+        // ], $request->all());
+        // $user = User::find($request->user_id);
+        // $event->users()->toggle($user);
+        $user = auth()->user();
+        $user->toggleFavorite($event);
+        return response()->json(['success' => true, 'data' => $event]);
     }
 }

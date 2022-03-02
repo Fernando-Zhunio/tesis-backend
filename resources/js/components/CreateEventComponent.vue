@@ -185,65 +185,24 @@ export default {
       .setLngLat(this.center)
       .addTo(this.map);
     this.marker.on("dragend", this.onDragEnd);
-
     this.dates = new AirDatepicker("#dates", {
       locale: localeEs,
       range: true,
       minDate: new Date(),
       multipleDatesSeparator: " - ",
     });
-    this.addMarker();
   },
   methods: {
-    addMarker() {
-      const coordinates = [
-         [
-            -79.896315,
-            -2.181886
-        ],
-        [
-            -79.896563,
-            -2.181976
-        ],
-        [
-            -79.897145,
-            -2.182231
-        ],
-        [
-            -79.897172,
-            -2.182176
-        ],
-        [
-            -79.897332,
-            -2.181813
-        ],
-        [
-            -79.89735,
-            -2.181749
-        ],
-        [
-            -79.897319,
-            -2.181692
-        ],
-        [
-            -79.897171,
-            -2.181619
-        ],
-        [
-            -79.896875,
-            -2.181494
-        ]
-      ];
-      coordinates.forEach((coordinate) => {
-        new mapboxgl.Marker({
-          draggable: true,
-        })
-          .setLngLat(coordinate)
-          .addTo(this.map);
-        console.log(coordinate);
-        // marker.on("dragend", this.onDragEnd);
-      });
-    },
+    // addMarker() {
+    //   coordinates.forEach((coordinate) => {
+    //     new mapboxgl.Marker({
+    //       draggable: true,
+    //     })
+    //       .setLngLat(coordinate)
+    //       .addTo(this.map);
+    //     console.log(coordinate);
+    //   });
+    // },
     getEvent() {
       axios.get(`/events/${this.event_id}/edit`).then((response) => {
         console.log(response.data);
@@ -283,6 +242,39 @@ export default {
       console.log(`Longitude: ${lngLat.lng}<br />Latitude: ${lngLat.lat}`);
       this.lat = lngLat.lat;
       this.lng = lngLat.lng;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.success, this.error);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    },
+
+    success(showPosition) {
+      const lat = showPosition.coords.latitude;
+      const lng = showPosition.coords.longitude;
+      this.center = [this.lng, this.lat];
+      console.log(this.center);
+      this.marker.setLngLat(this.center);
+      axios
+        .get(
+          `/waypoints?lng=${this.lng}&lat=${this.lat}&lng_o=${lng}&lat_o=${lat}`
+        )
+        .then((response) => {
+          console.log(response.data.data);
+          const res = response.data.data;
+          res.forEach((element) => {
+            new mapboxgl.Marker({
+              draggable: false,
+            })
+              .setLngLat(element)
+              .addTo(this.map);
+          });
+          // this.marker.setLngLat(this.center);
+        });
+    },
+
+    error(err) {
+      console.error("ERROR(" + err.code + "): " + err.message);
     },
     saveInServer() {
       const data_form = this.getDataForm();

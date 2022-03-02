@@ -15,7 +15,8 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('auth:api')->except(['index']);
     }
 
     /**
@@ -31,5 +32,20 @@ class HomeController extends Controller
         $events_enabled_count = Event::where('status', 1)->count();
         $users_count = User::count();
         return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count'));
+    }
+
+    public function indexApi() {
+        $_events = Event::orderBy('created_at', 'desc')->paginate(10);
+        
+        $events = auth()->user()->attachFavoriteStatus($_events);
+        // $eventsFavorite = auth()->user()->getFavoriteItems(Event::class)->paginate();
+        $eventsFavoriteCount = auth()->user()->favorites()->withType(Event::class)->count();
+
+        return response()->json(['success' => true, 'data' => [
+            'events' => $events,
+            // 'eventsFavorite' => $eventsFavorite,
+            'eventsFavoriteCount' => $eventsFavoriteCount,
+            'user' => auth()->user()
+        ]]);
     }
 }

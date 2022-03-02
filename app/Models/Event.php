@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
 
 class Event extends Model
 {
-    use HasFactory;
+    use Favoriteable, HasFactory;
     protected $fillable = [
         'name', 'description', 'image', 'position', 'status', 'start_date', 'end_date',
     ];
+
 
     public function users()
     {
@@ -25,6 +27,7 @@ class Event extends Model
     {
         return json_decode($details, true);
     }
+
 
 
 

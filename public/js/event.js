@@ -5508,22 +5508,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       minDate: new Date(),
       multipleDatesSeparator: " - "
     });
-    this.addMarker();
   },
   methods: {
-    addMarker: function addMarker() {
-      var _this = this;
-
-      var coordinates = [[-79.896315, -2.181886], [-79.896563, -2.181976], [-79.897145, -2.182231], [-79.897172, -2.182176], [-79.897332, -2.181813], [-79.89735, -2.181749], [-79.897319, -2.181692], [-79.897171, -2.181619], [-79.896875, -2.181494]];
-      coordinates.forEach(function (coordinate) {
-        new mapboxgl.Marker({
-          draggable: true
-        }).setLngLat(coordinate).addTo(_this.map);
-        console.log(coordinate); // marker.on("dragend", this.onDragEnd);
-      });
-    },
+    // addMarker() {
+    //   coordinates.forEach((coordinate) => {
+    //     new mapboxgl.Marker({
+    //       draggable: true,
+    //     })
+    //       .setLngLat(coordinate)
+    //       .addTo(this.map);
+    //     console.log(coordinate);
+    //   });
+    // },
     getEvent: function getEvent() {
-      var _this2 = this;
+      var _this = this;
 
       axios.get("/events/".concat(this.event_id, "/edit")).then(function (response) {
         console.log(response.data);
@@ -5535,18 +5533,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             start_date = _response$data$data.start_date,
             end_date = _response$data$data.end_date,
             position = _response$data$data.position;
-        _this2.name = name;
-        _this2.description = description;
-        _this2.image.url = image || _this2.url_img_default;
-        _this2.is_active = status;
+        _this.name = name;
+        _this.description = description;
+        _this.image.url = image || _this.url_img_default;
+        _this.is_active = status;
 
-        _this2.dates.selectDate([start_date, end_date]);
+        _this.dates.selectDate([start_date, end_date]);
 
-        _this2.lat = position[1];
-        _this2.lng = position[0];
-        _this2.center = [_this2.lng, _this2.lat];
+        _this.lat = position[1];
+        _this.lng = position[0];
+        _this.center = [_this.lng, _this.lat];
 
-        _this2.marker.setLngLat(_this2.center);
+        _this.marker.setLngLat(_this.center);
       });
     },
     fly: function fly() {
@@ -5564,6 +5562,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       console.log("Longitude: ".concat(lngLat.lng, "<br />Latitude: ").concat(lngLat.lat));
       this.lat = lngLat.lat;
       this.lng = lngLat.lng;
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.success, this.error);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    },
+    success: function success(showPosition) {
+      var _this2 = this;
+
+      var lat = showPosition.coords.latitude;
+      var lng = showPosition.coords.longitude;
+      this.center = [this.lng, this.lat];
+      console.log(this.center);
+      this.marker.setLngLat(this.center);
+      axios.get("/waypoints?lng=".concat(this.lng, "&lat=").concat(this.lat, "&lng_o=").concat(lng, "&lat_o=").concat(lat)).then(function (response) {
+        console.log(response.data.data);
+        var res = response.data.data;
+        res.forEach(function (element) {
+          new mapboxgl.Marker({
+            draggable: false
+          }).setLngLat(element).addTo(_this2.map);
+        }); // this.marker.setLngLat(this.center);
+      });
+    },
+    error: function error(err) {
+      console.error("ERROR(" + err.code + "): " + err.message);
     },
     saveInServer: function saveInServer() {
       var data_form = this.getDataForm();
