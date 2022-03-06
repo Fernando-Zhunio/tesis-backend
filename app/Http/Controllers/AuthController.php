@@ -15,7 +15,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        return response()->json(['success' => true, 'data' => $request->all()]);
         $request->validate([
             'email' => 'required|string|email|exists:users,email',
             'password' => 'required|string',
