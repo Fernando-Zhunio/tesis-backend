@@ -45,6 +45,6 @@ Route::get('/events/{event}', 'EventController@show');
 Route::post('/events', 'EventController@store');
 Route::put('/events/{id}', 'EventController@update');
 Route::delete('/events/{id}', 'EventController@delete');
-Route::get('/events/{event}/waypoints', 'EventController@getWaypoints');
+Route::get('/events/{event}/waypoints', 'EventController@getWaypointsForMap');
 Route::post('/events/{event}/favorite', 'EventController@toggleFavorite');
 

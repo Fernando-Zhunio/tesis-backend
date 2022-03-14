@@ -22,8 +22,7 @@ class EventController extends Controller
     public function __construct()
     {
         // $this->middleware('role:admin');
-        $this->middleware('auth:api');
-        // $this->middleware('auth:web')->only(['index', 'getWaypoints', 'show']);
+        // $this->middleware('auth:api');
     }
 
 
@@ -199,8 +198,6 @@ class EventController extends Controller
     public function getWaypointsForMap(Request $request,Event $event){
         // return $event;
         $request->validate([
-            // 'lat_o' => 'required|numeric',
-            // 'lng_o' => 'required|numeric',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
 
@@ -212,8 +209,13 @@ class EventController extends Controller
         $lng = $request->lng;
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
-        // $waypoints = $responde_mapbox['routes'][0]['geometry']['coordinates'];
-        $waypoints = array_slice($responde_mapbox['routes'][0]['geometry']['coordinates'],0, 5);
+        $waypoints =[];
+        $_waypoints = (array)$responde_mapbox['routes'][0]['geometry']['coordinates'];
+        if (count($_waypoints) > 1) {
+            $waypoints = ['start_location' => $_waypoints[0], 'end_location' => $_waypoints[1], 'is_end' => false];
+        } else {
+            $waypoints = ['start_location' => $_waypoints[0], 'end_location' => $_waypoints[0], 'is_end' => true];
+        }
 
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
