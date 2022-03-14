@@ -28,12 +28,23 @@ Route::prefix('auth')->group(function () {
 
 Route::get('home', 'HomeController@indexApi')->name('homeApi');
 
-Route::prefix('events')->group(function () {
-    Route::get('', 'EventController@index');
-    Route::get('/{id}', 'EventController@show');
-    Route::post('/', 'EventController@store');
-    Route::put('/{id}', 'EventController@update');
-    Route::delete('/{id}', 'EventController@delete');
-    Route::get('{event}/waypoints', [App\Http\Controllers\EventController::class, 'getWaypoints'])->name('events.waypoints');
-    Route::get('{event}/favorite', [App\Http\Controllers\EventController::class, 'toggleFavorite'])->name('events.toggle.favorite');
-});
+// Route::prefix('events')->group(function () {
+//     Route::get('', 'EventController@index');
+//     Route::get('/{event}', 'EventController@show');
+//     Route::post('/', 'EventController@store');
+//     Route::get('favorites', 'EventController@getFavorite');
+//     Route::put('/{id}', 'EventController@update');
+//     Route::delete('/{id}', 'EventController@delete');
+//     Route::get('{event}/waypoints', 'EventController@getWaypoints');
+//     Route::post('{event}/favorite', 'EventController@toggleFavorite');
+// });
+
+Route::get('/events', 'EventController@index');
+Route::get('/events/favorites', 'EventController@getFavorite');
+Route::get('/events/{event}', 'EventController@show');
+Route::post('/events', 'EventController@store');
+Route::put('/events/{id}', 'EventController@update');
+Route::delete('/events/{id}', 'EventController@delete');
+Route::get('/events/{event}/waypoints', 'EventController@getWaypoints');
+Route::post('/events/{event}/favorite', 'EventController@toggleFavorite');
+

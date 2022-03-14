@@ -25,10 +25,10 @@ Route::post('/logout',[App\Http\Controllers\Auth\LoginController::class,'logout'
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 #region eventos
-Route::get('/events', [App\Http\Controllers\EventController::class, 'indexOnlyAdmins'])->name('events.index');
-Route::get('/events/create', [App\Http\Controllers\EventController::class, 'create'])->name('events.create');
-Route::get('/events/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->name('events.edit');
-Route::put('/events/{event}', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
-Route::post('/events', [App\Http\Controllers\EventController::class, 'store'])->name('events.store');
-Route::get('/waypoints', [App\Http\Controllers\EventController::class, 'getWaypointsForMap'])->name('events.getWaypointsForMap');
+Route::get('/events', [App\Http\Controllers\EventAdminController::class, 'index'])->name('events.index');
+Route::get('/events/create', [App\Http\Controllers\EventAdminController::class, 'create'])->name('events.create');
+Route::get('/events/{event}/edit', [App\Http\Controllers\EventAdminController::class, 'edit'])->name('events.edit');
+Route::put('/events/{event}', [App\Http\Controllers\EventAdminController::class, 'update'])->name('events.update');
+Route::post('/events', [App\Http\Controllers\EventAdminController::class, 'store'])->name('events.store');
+Route::get('/waypoints', [App\Http\Controllers\EventAdminController::class, 'getWaypointsForMap'])->name('events.getWaypointsForMap');
 #endregion eventos

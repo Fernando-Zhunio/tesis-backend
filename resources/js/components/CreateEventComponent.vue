@@ -77,7 +77,7 @@
       </div>
     </div>
     <div class="card-body shadow-lg mt-3 rounded-20">
-      <div class="my-2">Seleccione la posicion del evento</div>
+      <div class="my-2">Seleccione la posición del evento</div>
       <div class="d-md-flex mb-2">
         <div class="row m-0">
           <div class="form-group col-md-6 col-12">

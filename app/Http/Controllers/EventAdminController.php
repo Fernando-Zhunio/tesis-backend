@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
-class EventController extends Controller
+class EventAdminController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,18 +22,18 @@ class EventController extends Controller
     public function __construct()
     {
         // $this->middleware('role:admin');
-        $this->middleware('auth:api');
-        // $this->middleware('auth:web')->only(['index', 'getWaypoints', 'show']);
+        // $this->middleware('auth:api');
+        $this->middleware('auth:web')->only(['index', 'getWaypoints', 'show']);
     }
 
+
+    // public function index()
+    // {
+    //     $events = Event::paginate();
+    //     return response()->json(['success' => true, 'data' => $events]);
+    // }
 
     public function index()
-    {
-        $events = Event::paginate();
-        return response()->json(['success' => true, 'data' => $events]);
-    }
-
-    public function indexOnlyAdmins()
     {
         $events = Event::orderBy('created_at', 'desc')->paginate();
         return view('events.index', compact('events'));
@@ -199,22 +199,20 @@ class EventController extends Controller
     public function getWaypointsForMap(Request $request,Event $event){
         // return $event;
         $request->validate([
-            // 'lat_o' => 'required|numeric',
-            // 'lng_o' => 'required|numeric',
+            'lat_o' => 'required|numeric',
+            'lng_o' => 'required|numeric',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
 
         ], $request->all());
-        $lng_o = $event->position[0];
-        $lat_o = $event->position[1];
+        $lng_o = $request->lng_o;
+        $lat_o = $request->lat_o;
         $token= env('TOKEN_MAPBOX');
         $lat = $request->lat;
         $lng = $request->lng;
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
-        // $waypoints = $responde_mapbox['routes'][0]['geometry']['coordinates'];
-        $waypoints = array_slice($responde_mapbox['routes'][0]['geometry']['coordinates'],0, 5);
-
+        $waypoints = array_slice($responde_mapbox['routes'][0]['geometry']['coordinates'],0, 2);
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
 
