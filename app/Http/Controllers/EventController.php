@@ -202,11 +202,11 @@ class EventController extends Controller
             'lng' => 'required|numeric',
 
         ], $request->all());
-        $lng_o = $event->position[0];
-        $lat_o = $event->position[1];
+        $lng = $event->position[0];
+        $lat = $event->position[1];
         $token= env('TOKEN_MAPBOX');
-        $lat = $request->lat;
-        $lng = $request->lng;
+        $lat_o = $request->lat;
+        $lng_o = $request->lng;
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
         $waypoints =[];
