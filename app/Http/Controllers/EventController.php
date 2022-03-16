@@ -22,7 +22,7 @@ class EventController extends Controller
     public function __construct()
     {
         // $this->middleware('role:admin');
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
 
