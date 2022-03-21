@@ -51,13 +51,27 @@
     <div class="row">
       <div class="col-md-6 col-12">
         <div class="form-group">
-          <label for="name">Fechas de inicio y fin del evento</label>
+          <label for="name">Fechas de inicio del evento</label>
           <input
+          readonly
             required
             type="text"
-            id="dates"
+            id="start_date"
             class="form-control"
-            name="dates"
+            name="start_date"
+          />
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <div class="form-group">
+          <label for="name">Fechas de fin del evento</label>
+          <input
+          readonly
+            required
+            type="text"
+            id="end_date"
+            class="form-control"
+            name="end_date"
           />
         </div>
       </div>
@@ -147,7 +161,8 @@ export default {
       lat: null,
       lng: null,
       marker: null,
-      dates: null,
+      start_date: null,
+      end_date: null,
       is_active: true,
       url_img_default: "/assets/images/background-default.jpg",
       image: {
@@ -185,11 +200,18 @@ export default {
       .setLngLat(this.center)
       .addTo(this.map);
     this.marker.on("dragend", this.onDragEnd);
-    this.dates = new AirDatepicker("#dates", {
+    this.start_date = new AirDatepicker("#start_date", {
       locale: localeEs,
-      range: true,
       minDate: new Date(),
       multipleDatesSeparator: " - ",
+      timepicker: true,
+    });
+
+    this.end_date = new AirDatepicker("#end_date", {
+      locale: localeEs,
+      minDate: new Date(),
+      multipleDatesSeparator: " - ",
+      timepicker: true,
     });
   },
   methods: {
@@ -219,7 +241,8 @@ export default {
         this.description = description;
         this.image.url = image || this.url_img_default;
         this.is_active = status;
-        this.dates.selectDate([start_date, end_date]);
+        this.start_date.selectDate([start_date]);
+        this.end_date.selectDate([end_date]);
         this.lat = position[1];
         this.lng = position[0];
         this.center = [this.lng, this.lat];
@@ -321,7 +344,7 @@ export default {
       if (this.description == null || this.description == "") {
         errors += "La descripción es requerida<br>";
       }
-      if (this.dates == null || this.dates == "") {
+      if (this.start_date == null || this.end_date == null) {
         errors += "Las fechas son requeridas<br>";
       }
       if (this.lat == null || this.lat == "") {
@@ -342,11 +365,11 @@ export default {
         return false;
       }
       const formData = new FormData();
-      const dates = this.getDates();
+      const {start_date, end_date} = this.getDates();
       formData.append("name", this.name);
       formData.append("description", this.description);
-      formData.append("dates[]", dates[0]);
-      formData.append("dates[]", dates[1]);
+      formData.append("start_date", start_date);
+      formData.append("end_date", end_date);
       formData.append("is_active", this.is_active);
       formData.append("lat", this.lat);
       formData.append("lng", this.lng);
@@ -359,9 +382,16 @@ export default {
       return formData;
     },
     getDates() {
-      const dates = this.dates.selectedDates;
-      if (dates.length == 2) {
-        return [this.formatDate(dates[0]), this.formatDate(dates[1])];
+      const start_date = this.start_date.selectedDates;
+      const end_date = this.end_date.selectedDates;
+        // throw new Error("Debe seleccionar un rango de fechas");
+
+      // const dates = this.dates.selectedDates;
+      if (start_date != null || end_date != null) {
+        return {
+          start_date: this.formatDate(start_date[0]),
+          end_date: this.formatDate(end_date[0]),
+        };
       } else {
         Swal.fire({
           title: "Complete los campos",

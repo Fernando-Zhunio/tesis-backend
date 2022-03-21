@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -28,7 +29,11 @@ class EventController extends Controller
 
     public function index()
     {
-        $events = Event::paginate();
+        // dd(Carbon::now());
+        $events = Event::whereDate('start_date', '>=', Carbon::now())
+        ->whereDate('end_date', '>=', Carbon::now())->where('status', 1)
+        ->orderBy('created_at', 'desc')
+        ->paginate();
         return response()->json(['success' => true, 'data' => $events]);
     }
 
@@ -59,8 +64,8 @@ class EventController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:2000',
-            'dates' => 'required|array',
-            'dates.*' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'image' => 'file|image|mimes:jpeg,png,jpg|max:2048',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',

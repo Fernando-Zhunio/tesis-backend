@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -21,17 +22,9 @@ class EventAdminController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('role:admin');
-        // $this->middleware('auth:api');
-        $this->middleware('auth:web')->only(['index', 'getWaypoints', 'show']);
+        $this->middleware('auth:web');
     }
 
-
-    // public function index()
-    // {
-    //     $events = Event::paginate();
-    //     return response()->json(['success' => true, 'data' => $events]);
-    // }
 
     public function index()
     {
@@ -60,13 +53,14 @@ class EventAdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:2000',
-            'dates' => 'required|array',
-            'dates.*' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'image' => 'file|image|mimes:jpeg,png,jpg|max:2048',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
+        $this->validateDateEvent($request->start_date, $request->end_date);
 
         if($request->hasFile('image')){
             $image = $request->file('image');
@@ -84,8 +78,8 @@ class EventAdminController extends Controller
             'image' => $file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
-            'start_date' => $request->dates[0],
-            'end_date' => $request->dates[1],
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
         ]);
 
         // return redirect()->route('events.index');
@@ -130,13 +124,15 @@ class EventAdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:2000',
-            'dates' => 'required|array',
-            'dates.*' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'image' => 'file|image|mimes:jpeg,png,jpg|max:2048',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
+        $this->validateDateEvent();
+        // throw  \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
 
         if($request->hasFile('image')){
             $image = $request->file('image');
@@ -153,8 +149,8 @@ class EventAdminController extends Controller
             'image' => $file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
-            'start_date' => $request->dates[0],
-            'end_date' => $request->dates[1],
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
         ]);
 
         // return redirect()->route('events.index');
@@ -227,5 +223,15 @@ class EventAdminController extends Controller
         // return $user;
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
+    }
+
+    public function validateDateEvent()
+    {
+        $start_date = new Carbon(request('start_date'));
+        $end_date = new Carbon(request('end_date'));
+        if($start_date->gt($end_date)){
+            throw \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
+        }
+        return true;
     }
 }

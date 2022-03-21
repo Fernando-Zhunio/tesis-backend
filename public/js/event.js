@@ -5456,6 +5456,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5472,7 +5486,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       marker: null,
       lat: null,
       lng: null
-    }, _defineProperty(_ref, "marker", null), _defineProperty(_ref, "dates", null), _defineProperty(_ref, "is_active", true), _defineProperty(_ref, "url_img_default", "/assets/images/background-default.jpg"), _defineProperty(_ref, "image", {
+    }, _defineProperty(_ref, "marker", null), _defineProperty(_ref, "start_date", null), _defineProperty(_ref, "end_date", null), _defineProperty(_ref, "is_active", true), _defineProperty(_ref, "url_img_default", "/assets/images/background-default.jpg"), _defineProperty(_ref, "image", {
       url: "/assets/images/background-default.jpg",
       base64: null
     }), _defineProperty(_ref, "isEdit", false), _ref;
@@ -5502,11 +5516,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       draggable: true
     }).setLngLat(this.center).addTo(this.map);
     this.marker.on("dragend", this.onDragEnd);
-    this.dates = new air_datepicker__WEBPACK_IMPORTED_MODULE_0__["default"]("#dates", {
+    this.start_date = new air_datepicker__WEBPACK_IMPORTED_MODULE_0__["default"]("#start_date", {
       locale: air_datepicker_locale_es__WEBPACK_IMPORTED_MODULE_2__["default"],
-      range: true,
       minDate: new Date(),
-      multipleDatesSeparator: " - "
+      multipleDatesSeparator: " - ",
+      timepicker: true
+    });
+    this.end_date = new air_datepicker__WEBPACK_IMPORTED_MODULE_0__["default"]("#end_date", {
+      locale: air_datepicker_locale_es__WEBPACK_IMPORTED_MODULE_2__["default"],
+      minDate: new Date(),
+      multipleDatesSeparator: " - ",
+      timepicker: true
     });
   },
   methods: {
@@ -5538,7 +5558,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this.image.url = image || _this.url_img_default;
         _this.is_active = status;
 
-        _this.dates.selectDate([start_date, end_date]);
+        _this.start_date.selectDate([start_date]);
+
+        _this.end_date.selectDate([end_date]);
 
         _this.lat = position[1];
         _this.lng = position[0];
@@ -5635,7 +5657,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         errors += "La descripción es requerida<br>";
       }
 
-      if (this.dates == null || this.dates == "") {
+      if (this.start_date == null || this.end_date == null) {
         errors += "Las fechas son requeridas<br>";
       }
 
@@ -5660,11 +5682,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       var formData = new FormData();
-      var dates = this.getDates();
+
+      var _this$getDates = this.getDates(),
+          start_date = _this$getDates.start_date,
+          end_date = _this$getDates.end_date;
+
       formData.append("name", this.name);
       formData.append("description", this.description);
-      formData.append("dates[]", dates[0]);
-      formData.append("dates[]", dates[1]);
+      formData.append("start_date", start_date);
+      formData.append("end_date", end_date);
       formData.append("is_active", this.is_active);
       formData.append("lat", this.lat);
       formData.append("lng", this.lng);
@@ -5680,10 +5706,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return formData;
     },
     getDates: function getDates() {
-      var dates = this.dates.selectedDates;
+      var start_date = this.start_date.selectedDates;
+      var end_date = this.end_date.selectedDates; // throw new Error("Debe seleccionar un rango de fechas");
+      // const dates = this.dates.selectedDates;
 
-      if (dates.length == 2) {
-        return [this.formatDate(dates[0]), this.formatDate(dates[1])];
+      if (start_date != null || end_date != null) {
+        return {
+          start_date: this.formatDate(start_date[0]),
+          end_date: this.formatDate(end_date[0])
+        };
       } else {
         Swal.fire({
           title: "Complete los campos",
@@ -28849,6 +28880,8 @@ var render = function () {
     _c("div", { staticClass: "row" }, [
       _vm._m(1),
       _vm._v(" "),
+      _vm._m(2),
+      _vm._v(" "),
       _c(
         "div",
         { staticClass: "col-md-6 col-12 align-items-md-end d-md-flex" },
@@ -28908,7 +28941,7 @@ var render = function () {
     _vm._v(" "),
     _c("div", { staticClass: "card-body shadow-lg mt-3 rounded-20" }, [
       _c("div", { staticClass: "my-2" }, [
-        _vm._v("Seleccione la posicion del evento"),
+        _vm._v("Seleccione la posición del evento"),
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "d-md-flex mb-2" }, [
@@ -29019,12 +29052,41 @@ var staticRenderFns = [
     return _c("div", { staticClass: "col-md-6 col-12" }, [
       _c("div", { staticClass: "form-group" }, [
         _c("label", { attrs: { for: "name" } }, [
-          _vm._v("Fechas de inicio y fin del evento"),
+          _vm._v("Fechas de inicio del evento"),
         ]),
         _vm._v(" "),
         _c("input", {
           staticClass: "form-control",
-          attrs: { required: "", type: "text", id: "dates", name: "dates" },
+          attrs: {
+            readonly: "",
+            required: "",
+            type: "text",
+            id: "start_date",
+            name: "start_date",
+          },
+        }),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-6 col-12" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", { attrs: { for: "name" } }, [
+          _vm._v("Fechas de fin del evento"),
+        ]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: {
+            readonly: "",
+            required: "",
+            type: "text",
+            id: "end_date",
+            name: "end_date",
+          },
         }),
       ]),
     ])
