@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -29,21 +29,26 @@ class HomeController extends Controller
         $events = Event::orderBy('created_at', 'desc')->paginate();
         $events_count = Event::count();
         $events_disabled_count = Event::where('status', 0)->count();
-        $events_enabled_count = Event::where('status', 1)->count();
+        $events_enabled_count = Event::where('status', 1)
+        ->whereDate('start_date', '>=', Carbon::now())
+        ->whereDate('end_date', '>=', Carbon::now())
+        ->where('status', 1)->count();
         $users_count = User::count();
         return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count'));
     }
 
     public function indexApi() {
         $_events = Event::orderBy('created_at', 'desc')->paginate(10);
-        
         $events = auth()->user()->attachFavoriteStatus($_events);
-        // $eventsFavorite = auth()->user()->getFavoriteItems(Event::class)->paginate();
+        $eventsActives = Event::where('status', 1)
+        ->whereDate('start_date', '>=', Carbon::now())
+        ->whereDate('end_date', '>=', Carbon::now())
+        ->where('status', 1)->count();
         $eventsFavoriteCount = auth()->user()->favorites()->withType(Event::class)->count();
 
         return response()->json(['success' => true, 'data' => [
             'events' => $events,
-            // 'eventsFavorite' => $eventsFavorite,
+            'eventsActivesCount' => $eventsActives,
             'eventsFavoriteCount' => $eventsFavoriteCount,
             'user' => auth()->user()
         ]]);
