@@ -236,4 +236,5 @@ class EventController extends Controller
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
     }
+    
 }

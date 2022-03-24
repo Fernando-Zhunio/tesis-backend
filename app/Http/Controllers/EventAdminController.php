@@ -75,7 +75,7 @@ class EventAdminController extends Controller
         $event = Event::create([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $file_name ?? null,
+            'image' => "/storage/".$file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->start_date,
@@ -146,7 +146,7 @@ class EventAdminController extends Controller
         $event = $event->update([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $file_name ?? null,
+            'image' => "/storage/".$file_name ?? null,
             'position' => '['.$request->lng.','. $request->lat.']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->start_date,
