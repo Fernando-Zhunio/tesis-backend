@@ -62,7 +62,7 @@ class EventAdminController extends Controller
         ], $request->all());
         $this->validateDateEvent($request->start_date, $request->end_date);
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
 
@@ -75,8 +75,8 @@ class EventAdminController extends Controller
         $event = Event::create([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => "/storage/".$file_name ?? null,
-            'position' => '['.$request->lng.','. $request->lat.']',
+            'image' => "/storage/" . $file_name ?? null,
+            'position' => '[' . $request->lng . ',' . $request->lat . ']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -106,7 +106,7 @@ class EventAdminController extends Controller
      */
     public function edit(Event $event)
     {
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return response()->json(['success' => true, 'data' => $event]);
         }
         return view('events.createOrEdit', compact('event'));
@@ -135,7 +135,7 @@ class EventAdminController extends Controller
         $this->validateDateEvent();
         // throw  \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
             // $name = time().'.'.$image->getClientOriginalExtension();
@@ -147,8 +147,8 @@ class EventAdminController extends Controller
         $event = $event->update([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => "/storage/".$file_name ?? null,
-            'position' => '['.$request->lng.','. $request->lat.']',
+            'image' => $file_name ?? null,
+            'position' => '[' . $request->lng . ',' . $request->lat . ']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -170,13 +170,16 @@ class EventAdminController extends Controller
         //
     }
 
-    public function addFile(UploadedFile  $file,  string $disk = 'public', string $dir = '/images'){
+    public function addFile(UploadedFile $file, string $disk = 's3', string $dir = 'images')
+    {
         $file_name =  $dir . "/" . Str::random(30) . time() . "." . $file->guessClientExtension();
-        Storage::disk($disk)->put($file_name, $file->getContent());
-        return $file_name;
+        $file = Storage::disk($disk)->put($file_name, $file->getContent());
+        $path = Storage::disk($disk)->url($file_name);
+        return $path;
     }
 
-    public function getWaypoints(Request $request,Event $event){
+    public function getWaypoints(Request $request, Event $event)
+    {
         // return $event;
         $request->validate([
             'lat' => 'required|numeric',
@@ -184,7 +187,7 @@ class EventAdminController extends Controller
         ], $request->all());
         $lng_start = $request->lng;
         $lat_start = $request->lat;
-        $token= env('TOKEN_MAPBOX');
+        $token = env('TOKEN_MAPBOX');
         $lng_end = $event->position[0];
         $lat_end = $event->position[1];
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_start,$lat_start;$lng_end,$lat_end?access_token=$token&geometries=geojson&overview=full";
@@ -193,7 +196,8 @@ class EventAdminController extends Controller
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
 
-    public function getWaypointsForMap(Request $request,Event $event){
+    public function getWaypointsForMap(Request $request, Event $event)
+    {
         // return $event;
         $request->validate([
             'lat_o' => 'required|numeric',
@@ -204,22 +208,24 @@ class EventAdminController extends Controller
         ], $request->all());
         $lng_o = $request->lng_o;
         $lat_o = $request->lat_o;
-        $token= env('TOKEN_MAPBOX');
+        $token = env('TOKEN_MAPBOX');
         $lat = $request->lat;
         $lng = $request->lng;
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
-        $waypoints = array_slice($responde_mapbox['routes'][0]['geometry']['coordinates'],0, 2);
+        $waypoints = array_slice($responde_mapbox['routes'][0]['geometry']['coordinates'], 0, 2);
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
 
-    public function toggleFavorite(Request $request, Event $event){
+    public function toggleFavorite(Request $request, Event $event)
+    {
         $user = auth()->user();
         $user->toggleFavorite($event);
         return response()->json(['success' => true, 'data' => $event]);
     }
 
-    public function getFavorite(){
+    public function getFavorite()
+    {
         $user = auth()->user();
         // return $user;
         $events = $user->getFavoriteItems(Event::class)->get();
@@ -230,7 +236,7 @@ class EventAdminController extends Controller
     {
         $start_date = new Carbon(request('start_date'));
         $end_date = new Carbon(request('end_date'));
-        if($start_date->gt($end_date)){
+        if ($start_date->gt($end_date)) {
             throw \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
         }
         return true;

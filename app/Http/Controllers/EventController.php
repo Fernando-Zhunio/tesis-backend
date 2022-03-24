@@ -31,9 +31,9 @@ class EventController extends Controller
     {
         // dd(Carbon::now());
         $events = Event::whereDate('start_date', '>=', Carbon::now())
-        ->whereDate('end_date', '>=', Carbon::now())->where('status', 1)
-        ->orderBy('created_at', 'desc')
-        ->paginate();
+            ->whereDate('end_date', '>=', Carbon::now())->where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
         return response()->json(['success' => true, 'data' => $events]);
     }
 
@@ -72,7 +72,7 @@ class EventController extends Controller
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
 
@@ -86,7 +86,7 @@ class EventController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $file_name ?? null,
-            'position' => '['.$request->lng.','. $request->lat.']',
+            'position' => '[' . $request->lng . ',' . $request->lat . ']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->dates[0],
             'end_date' => $request->dates[1],
@@ -116,7 +116,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return response()->json(['success' => true, 'data' => $event]);
         }
         return view('events.createOrEdit', compact('event'));
@@ -142,7 +142,7 @@ class EventController extends Controller
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
             // $name = time().'.'.$image->getClientOriginalExtension();
@@ -155,7 +155,7 @@ class EventController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $file_name ?? null,
-            'position' => '['.$request->lng.','. $request->lat.']',
+            'position' => '[' . $request->lng . ',' . $request->lat . ']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->dates[0],
             'end_date' => $request->dates[1],
@@ -177,13 +177,15 @@ class EventController extends Controller
         //
     }
 
-    public function addFile(UploadedFile  $file,  string $disk = 'public', string $dir = '/images'){
+    public function addFile(UploadedFile  $file,  string $disk = 'public', string $dir = '/images')
+    {
         $file_name =  $dir . "/" . Str::random(30) . time() . "." . $file->guessClientExtension();
         Storage::disk($disk)->put($file_name, $file->getContent());
         return $file_name;
     }
 
-    public function getWaypoints(Request $request,Event $event){
+    public function getWaypoints(Request $request, Event $event)
+    {
         // return $event;
         $request->validate([
             'lat' => 'required|numeric',
@@ -191,7 +193,7 @@ class EventController extends Controller
         ], $request->all());
         $lng_start = $request->lng;
         $lat_start = $request->lat;
-        $token= env('TOKEN_MAPBOX');
+        $token = env('TOKEN_MAPBOX');
         $lng_end = $event->position[0];
         $lat_end = $event->position[1];
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_start,$lat_start;$lng_end,$lat_end?access_token=$token&geometries=geojson&overview=full";
@@ -200,7 +202,8 @@ class EventController extends Controller
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
 
-    public function getWaypointsForMap(Request $request,Event $event){
+    public function getWaypointsForMap(Request $request, Event $event)
+    {
         // return $event;
         $request->validate([
             'lat' => 'required|numeric',
@@ -209,12 +212,12 @@ class EventController extends Controller
         ], $request->all());
         $lng = $event->position[0];
         $lat = $event->position[1];
-        $token= env('TOKEN_MAPBOX');
+        $token = env('TOKEN_MAPBOX');
         $lat_o = $request->lat;
         $lng_o = $request->lng;
         $url = "https://api.mapbox.com/directions/v5/mapbox/driving/$lng_o,$lat_o;$lng,$lat?access_token=$token&geometries=geojson&overview=full";
         $responde_mapbox = Http::get($url)->json();
-        $waypoints =[];
+        $waypoints = [];
         $_waypoints = (array)$responde_mapbox['routes'][0]['geometry']['coordinates'];
         if (count($_waypoints) > 1) {
             $waypoints = ['start_location' => $_waypoints[0], 'end_location' => $_waypoints[1], 'is_end' => false];
@@ -225,16 +228,17 @@ class EventController extends Controller
         return response()->json(['success' => true, 'data' => $waypoints]);
     }
 
-    public function toggleFavorite(Request $request, Event $event){
+    public function toggleFavorite(Request $request, Event $event)
+    {
         $user = auth()->user();
         $user->toggleFavorite($event);
         return response()->json(['success' => true, 'data' => $event]);
     }
 
-    public function getFavorite(){
+    public function getFavorite()
+    {
         $user = auth()->user();
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
     }
-    
 }
