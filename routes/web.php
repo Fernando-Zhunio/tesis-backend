@@ -31,4 +31,12 @@ Route::get('/events/{event}/edit', [App\Http\Controllers\EventAdminController::c
 Route::put('/events/{event}', [App\Http\Controllers\EventAdminController::class, 'update'])->name('events.update');
 Route::post('/events', [App\Http\Controllers\EventAdminController::class, 'store'])->name('events.store');
 Route::get('/waypoints', [App\Http\Controllers\EventAdminController::class, 'getWaypointsForMap'])->name('events.getWaypointsForMap');
+
+
+Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+Route::post('/users/{id}/admin', [App\Http\Controllers\UserController::class, 'beAdmin'])->name('users.be.admin');
+Route::post('/users/{id}/not-admin', [App\Http\Controllers\UserController::class, 'quitAdmin'])->name('users.quit.admin');
+Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+
+
 #endregion eventos

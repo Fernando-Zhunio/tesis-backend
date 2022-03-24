@@ -35,8 +35,4 @@ class Event extends Model
     {
         return json_decode($details, true);
     }
-
-
-
-
 }
