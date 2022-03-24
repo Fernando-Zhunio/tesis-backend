@@ -1,0 +1,14 @@
+<template>
+    <div>
+        <h2>Usuarios</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</template>

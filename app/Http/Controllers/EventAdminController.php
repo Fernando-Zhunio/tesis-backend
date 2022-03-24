@@ -131,6 +131,7 @@ class EventAdminController extends Controller
             'lng' => 'required|numeric',
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
+        // dd($request->start_date);
         $this->validateDateEvent();
         // throw  \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
 
