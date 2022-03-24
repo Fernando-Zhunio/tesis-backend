@@ -50,7 +50,7 @@ class AuthController extends Controller
 
     public function signUp(Request $request)
     {
-        $dateMayor =  Carbon::now()->subYears(18);
+        $dateMayor =  Carbon::now()->subYears(18)->format('d/m/Y');
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
