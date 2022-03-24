@@ -65,25 +65,16 @@ class EventAdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
-
-            // $name = time().'.'.$image->getClientOriginalExtension();
-            // $path = $image->storeAs('images', $name);
-            // $destinationPath = public_path('/images');
-            // $image->move($destinationPath, $name);
         }
-
         $event = Event::create([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => "/storage/" . $file_name ?? null,
+            'image' => $file_name ?? null,
             'position' => '[' . $request->lng . ',' . $request->lat . ']',
             'status' => (bool)$request->is_active,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
-
-        // return redirect()->route('events.index');
-
         return response()->json(['success' => true, 'data' => $request->all()]);
     }
 
@@ -131,17 +122,12 @@ class EventAdminController extends Controller
             'lng' => 'required|numeric',
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
-        // dd($request->start_date);
         $this->validateDateEvent();
         // throw  \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
-            // $name = time().'.'.$image->getClientOriginalExtension();
-            // $path = $image->storeAs('images', $name);
-            // $destinationPath = public_path('/images');
-            // $image->move($destinationPath, $name);
         }
 
         $event = $event->update([
@@ -226,8 +212,8 @@ class EventAdminController extends Controller
 
     public function getFavorite()
     {
+        /* @var $user User */
         $user = auth()->user();
-        // return $user;
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
     }
