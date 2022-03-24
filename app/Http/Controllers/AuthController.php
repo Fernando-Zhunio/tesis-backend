@@ -58,11 +58,12 @@ class AuthController extends Controller
             'is_student' => 'required|boolean',
             'password' => 'required|string|confirmed'
         ]);
+        $date = str_replace('/', '-', $request->birthday);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'birthday' => Carbon::parse($request->birthday)->format('Y-m-d H:i:s'),
+            'birthday' => Carbon::parse($date)->format('Y-m-d H:i:s'),
             'is_student' => $request->is_student,
             'password' => bcrypt($request->password)
         ]);
