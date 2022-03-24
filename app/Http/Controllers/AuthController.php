@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -20,7 +21,10 @@ class AuthController extends Controller
             'password' => 'required|string',
             'remember_me' => 'boolean'
         ]);
-
+         
+        throw ValidationException::withMessages([
+            'password' => [$request->password]
+        ]);
         $credentials = request(['email', 'password']);
 
         if (!auth()->attempt($credentials)) {
