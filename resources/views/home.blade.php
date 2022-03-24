@@ -100,7 +100,7 @@
                     </a>
                 </div>
                 @can('super-admin')
-                   <div class="col-md-4 col-12">
+                   {{-- <div class="col-md-4 col-12">
                     <a href="{{ route('events.create') }}" style="text-decoration: none">
                         <div class="card text-center border-0 shadow lead" style="border-radius: 20px">
                             <div class="card-header" style="border-radius: 20px 20px 0 0;">
@@ -114,10 +114,10 @@
                         </div>
                     </a>
                 </div> 
-               
+                --}}
                 
                 <div class="col-md-4 col-12">
-                    <a href="{{ route('events.create') }}" style="text-decoration: none">
+                    <a href="{{ route('users.index') }}" style="text-decoration: none">
                         <div class="card text-center border-0 shadow lead" style="border-radius: 20px">
                             <div class="card-header" style="border-radius: 20px 20px 0 0;">
                                 <i class="fas fa-users-cog fa-6x"></i>

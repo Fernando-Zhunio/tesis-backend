@@ -32,10 +32,10 @@
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->birthday }}</td>
-                        <td>{{ $user->roles[0]->description}}</td>
+                        <td>{{ $user?->roles[0]->description}}</td>
                         <td>{{ $user->is_student ? 'Si' : 'No' }}</td>
                         <td>
-                             @if ($user->roles[0]->name == 'super-admin')
+                             @if ($user?->roles[0]->name == 'super-admin')
                              <form action="{{ route('users.quit.admin', $user->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-warning">Quitar admin</button>
