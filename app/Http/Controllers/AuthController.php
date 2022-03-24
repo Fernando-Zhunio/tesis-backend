@@ -22,9 +22,9 @@ class AuthController extends Controller
             'remember_me' => 'boolean'
         ]);
          
-        throw ValidationException::withMessages([
-            'password' => [$request->password]
-        ]);
+        // throw ValidationException::withMessages([
+        //     'password' => [$request->password]
+        // ]);
         $credentials = request(['email', 'password']);
 
         if (!auth()->attempt($credentials)) {
