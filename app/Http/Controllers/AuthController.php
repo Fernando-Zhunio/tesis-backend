@@ -54,7 +54,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'birthday' => 'required|date|before:'.$dateMayor,
+            'birthday' => 'required|date_format:d/m/Y|before:'.$dateMayor,
             'is_student' => 'required|boolean',
             'password' => 'required|string|confirmed'
         ]);
