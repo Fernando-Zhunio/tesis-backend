@@ -23,7 +23,6 @@ class Event extends Model
 
     protected function getIsFavoriteAttribute()
     {
-        // return $this->favoriters->contains(auth()->user());
         return $this->hasBeenFavoritedBy(auth()->user());
     }
 

@@ -11,7 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Illuminate\Validation\ValidationException;
 
 class EventAdminController extends Controller
 {
@@ -62,6 +62,9 @@ class EventAdminController extends Controller
             'lng' => 'required|numeric',
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
+        // throw ValidationException::withMessages(
+        //     $request->all(),
+        // );
         $this->validateDateEvent($request->start_date, $request->end_date);
 
         if ($request->hasFile('image')) {
@@ -73,7 +76,7 @@ class EventAdminController extends Controller
             'description' => $request->description,
             'image' => $file_name ?? null,
             'position' => '[' . $request->lng . ',' . $request->lat . ']',
-            'status' => (bool)$request->is_active,
+            'status' => $request->is_active == 'true' ? 1 : 0,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
@@ -137,7 +140,7 @@ class EventAdminController extends Controller
             'description' => $request->description,
             'image' => $file_name ?? null,
             'position' => '[' . $request->lng . ',' . $request->lat . ']',
-            'status' => (bool)$request->is_active,
+            'status' => $request->is_active == 'true' ? 1 : 0,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
