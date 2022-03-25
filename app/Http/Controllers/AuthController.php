@@ -42,8 +42,6 @@ class AuthController extends Controller
             $token->save();
         }
 
-        $user->assignRole('user');
-
         return response()->json([
             'user' => $user,
             'access_token' => $tokenResult->accessToken,

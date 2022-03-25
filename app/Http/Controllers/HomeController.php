@@ -15,7 +15,8 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->only(['index']);
+        $this->middleware('auth:web')->only(['index']);
+        // $this->middleware('can:super-admin')->only(['index']);
         $this->middleware('auth:api')->except(['index']);
     }
 
