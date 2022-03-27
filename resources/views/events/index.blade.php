@@ -37,9 +37,12 @@
                                     {{ $event->status ? 'Activo' : 'Inactivo' }}
                                 </p>
                                 <p>{{$event->created_at->diffforhumans()}}</p>
-                                <p class="m-0 fs-5">{{ $event->name }}</p>
+                                <p class="m-0 fs-5 text-secondary">{{ $event->name }}</p>
                                 <p class="card-text ">{{ $event->description }}</p>
-                                <a href="{{route('events.edit',['event' => $event->id])}}" class="btn rouded-circle btn-outline-primary"><i class="far fa-edit"></i></a>
+                                <div class="badge bg-info">Inicia: {{ $event->start_date }}</div>
+                                <div class="badge bg-warning">Finaliza: {{ $event->end_date }}</div>
+                                <br>
+                                <a href="{{route('events.edit',['event' => $event->id])}}" class="btn rounded-pill btn-primary mt-2">Editar <i class="far fa-edit"></i></a>
                             </div>
                         </div>
                     </div>
