@@ -16,6 +16,7 @@
         "laravel/ui": "^3.4",
         "league/flysystem-aws-s3-v3": "^1.0",
         "overtrue/laravel-favorite": "4.0.1",
+        "overtrue/laravel-like": "4.1.0",
         "spatie/laravel-permission": "^5.5"
     },
     "require-dev": {

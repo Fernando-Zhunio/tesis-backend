@@ -153,7 +153,6 @@ export default {
   data() {
     return {
       center: [-79.89844529968079, -2.181452614962342],
-      // center: [-79.952899, -2.117987],
       map: null,
       name: null,
       description: null,

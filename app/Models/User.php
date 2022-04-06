@@ -10,12 +10,12 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Overtrue\LaravelFavorite\Traits\Favoriter;
-
+use Overtrue\LaravelLike\Traits\Liker;
 
 class User extends Authenticatable
 {
 
-    use Search, Favoriter, HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use  Liker, Search, Favoriter, HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.

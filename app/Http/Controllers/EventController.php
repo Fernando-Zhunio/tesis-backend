@@ -230,6 +230,9 @@ class EventController extends Controller
 
     public function toggleFavorite(Request $request, Event $event)
     {
+         /**
+         * @var User $user
+         */
         $user = auth()->user();
         $user->toggleFavorite($event);
         return response()->json(['success' => true, 'data' => $event]);
@@ -237,8 +240,22 @@ class EventController extends Controller
 
     public function getFavorite()
     {
+        /**
+         * @var User $user
+         */
         $user = auth()->user();
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
+    }
+
+    public function toggleLike(Request $request, Event $event)
+    {
+        /**
+         * @var User $user
+         */
+        $user = auth()->user();
+        $isLike = $user->toggleLike($event);
+
+        return response()->json(['success' => true, 'data' => $isLike]);
     }
 }

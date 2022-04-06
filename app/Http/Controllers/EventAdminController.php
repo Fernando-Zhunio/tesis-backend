@@ -128,8 +128,6 @@ class EventAdminController extends Controller
             'is_active' => 'required|in:true,false,0,1',
         ], $request->all());
         $this->validateDateEvent();
-        // throw  \Illuminate\Validation\ValidationException::withMessages(['rango', 'El campo fecha de inicio debe ser menor que la fecha de fin']);
-
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $file_name = $this->addFile($image);
@@ -171,7 +169,6 @@ class EventAdminController extends Controller
 
     public function getWaypoints(Request $request, Event $event)
     {
-        // return $event;
         $request->validate([
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
@@ -189,7 +186,6 @@ class EventAdminController extends Controller
 
     public function getWaypointsForMap(Request $request, Event $event)
     {
-        // return $event;
         $request->validate([
             'lat_o' => 'required|numeric',
             'lng_o' => 'required|numeric',
@@ -210,6 +206,9 @@ class EventAdminController extends Controller
 
     public function toggleFavorite(Request $request, Event $event)
     {
+        /** 
+        * @var User $user
+        */
         $user = auth()->user();
         $user->toggleFavorite($event);
         return response()->json(['success' => true, 'data' => $event]);
@@ -217,7 +216,9 @@ class EventAdminController extends Controller
 
     public function getFavorite()
     {
-        /* @var $user User */
+        /** 
+        * @var User $user
+        */
         $user = auth()->user();
         $events = $user->getFavoriteItems(Event::class)->get();
         return response()->json(['success' => true, 'data' => $events]);
