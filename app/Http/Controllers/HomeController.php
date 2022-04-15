@@ -36,24 +36,25 @@ class HomeController extends Controller
             ->where('status', 1)->count();
         $users_count = User::count();
         $best_event = Event::where('status', 1)->withCount('favorites')->get();
-        return response()->json([
-            // 'events' => $events,
-            'events_count' => $events_count,
-            'events_disabled_count' => $events_disabled_count,
-            'events_enabled_count' => $events_enabled_count,
-            'users_count' => $users_count,
-            'best_event' => $best_event
-        ]);
-        return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count'));
+        $date_server = Carbon::now()->toDateTimeString();
+        // return response()->json([
+        //     // 'events' => $events,
+        //     'events_count' => $events_count,
+        //     'events_disabled_count' => $events_disabled_count,
+        //     'events_enabled_count' => $events_enabled_count,
+        //     'users_count' => $users_count,
+        //     'best_event' => $best_event,
+        // ]);
+        return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count', 'date_server' ));
     }
 
     public function indexApi()
     {
         $_events = Event::orderBy('created_at', 'desc')
-            ->where('status', 1)
-            ->where('start_date', '>=', Carbon::now())
-            ->orWhere('end_date', '>=', Carbon::now())
-            ->paginate();
+        ->where('start_date', '>=', Carbon::now())
+        ->orWhere('end_date', '>=', Carbon::now())
+        ->where('status', 1)
+        ->paginate();
         /**
          * @var Event $events
          */
@@ -71,6 +72,8 @@ class HomeController extends Controller
             'eventsActivesCount' => $eventsActives,
             'eventsFavoriteCount' => $eventsFavoriteCount,
             'user' => $user,
+            'date_server' => Carbon::now()->toDateTimeString(),
+
         ]]);
     }
 }
