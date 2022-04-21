@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Search;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -49,4 +50,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'is_student' => 'boolean'
     ];
+
+    public function toggleFavorite(Model $object)
+    {
+        $isFavorite = $this->hasFavorited($object);
+        $isFavorite ? $this->unfavorite($object) : $this->favorite($object);
+        return !$isFavorite;
+    }
 }

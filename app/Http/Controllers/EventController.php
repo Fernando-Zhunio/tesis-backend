@@ -234,8 +234,8 @@ class EventController extends Controller
          * @var User $user
          */
         $user = auth()->user();
-        $user->toggleFavorite($event);
-        return response()->json(['success' => true, 'data' => $event]);
+        $isFavorite = $user->toggleFavorite($event);
+        return response()->json(['success' => true, 'data' => $isFavorite]);
     }
 
     public function getFavorite()
@@ -254,7 +254,8 @@ class EventController extends Controller
          * @var User $user
          */
         $user = auth()->user();
-        $isLike = $user->toggleLike($event);
+        $isLike = true;
+        if (is_bool($user->toggleLike($event)) == 'boolean' ) $isLike = false;
 
         return response()->json(['success' => true, 'data' => $isLike]);
     }

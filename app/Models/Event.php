@@ -36,4 +36,10 @@ class Event extends Model
     {
         return json_decode($details, true);
     }
+
+    public function toggleFavorite(Model $object)
+    {
+        return 'fernando';
+       return $this->hasFavorited($object) ? $this->unfavorite($object) : $this->favorite($object);
+    }
 }
