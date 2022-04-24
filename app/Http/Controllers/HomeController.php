@@ -37,15 +37,17 @@ class HomeController extends Controller
         $users_count = User::count();
         $best_event = Event::where('status', 1)->withCount('favorites')->get();
         $date_server = Carbon::now()->toDateTimeString();
+        $events_best_like = Event::where('status', 1)->whereHas('likers')->withCount('likers')->orderBy('likers_count', 'desc')->paginate(10);
         // return response()->json([
         //     // 'events' => $events,
         //     'events_count' => $events_count,
         //     'events_disabled_count' => $events_disabled_count,
         //     'events_enabled_count' => $events_enabled_count,
         //     'users_count' => $users_count,
-        //     'best_event' => $best_event,
+        //     // 'best_event' => $best_event,
+        //     'event_like' => $events_best_like,
         // ]);
-        return view('home', compact('events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count', 'date_server' ));
+        return view('home', compact('events_best_like','events', 'events_count', 'users_count', 'events_disabled_count', 'events_enabled_count', 'date_server' ));
     }
 
     public function indexApi()

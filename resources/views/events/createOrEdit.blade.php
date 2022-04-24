@@ -28,7 +28,7 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
 @endsection
 @section('content')
-    <div id="app" class="container">
+    <div  class="container">
         @isset($event)
             <div class="display-3">Editando Evento</div>
             <create-events-component :event_id="{{ $event->id }}"></create-events-component>

@@ -51,7 +51,9 @@ window.Vue = require('vue').default;
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('create-events-component', require('./components/CreateEventComponent.vue').default);
-
+Vue.component('events-list-component', require('./components/EventsListComponent.vue').default);
+Vue.component('create-user-component', require('./components/CreateUserComponent.vue').default);
+Vue.component('users-list-component', require('./components/UsersIndexComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

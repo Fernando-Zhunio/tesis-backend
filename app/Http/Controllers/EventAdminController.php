@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\File;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -23,15 +24,18 @@ class EventAdminController extends Controller
     public function __construct()
     {
         $this->middleware('auth:web');
-        $this->middleware('can:super-admin');
-
+        // $this->middleware('can:super-admin');
+        $this->middleware(['role:admin|super-admin']);
     }
 
 
     public function index()
     {
-        $events = Event::orderBy('created_at', 'desc')->paginate();
-        return view('events.index', compact('events'));
+        $search = request()->get('search', null);
+        $events = Event::search($search)->orderBy('created_at', 'desc')->paginate();
+        return request()->wantsJson()
+                    ? new JsonResponse($events, 200)
+        :  view('events.index', compact('events'));
     }
 
     /**
@@ -91,7 +95,9 @@ class EventAdminController extends Controller
      */
     public function show(Event $event)
     {
-        return response()->json(['success' => true, 'data' => $event]);
+        // return response()->json(['success' => true, 'data' => $event]);
+        // return 'fer';
+        return view('events.show', compact('event'));
     }
 
     /**
@@ -206,7 +212,7 @@ class EventAdminController extends Controller
 
     public function toggleFavorite(Request $request, Event $event)
     {
-        /** 
+        /**
         * @var User $user
         */
         $user = auth()->user();
@@ -216,7 +222,7 @@ class EventAdminController extends Controller
 
     public function getFavorite()
     {
-        /** 
+        /**
         * @var User $user
         */
         $user = auth()->user();

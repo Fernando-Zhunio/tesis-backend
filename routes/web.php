@@ -27,6 +27,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 #region eventos
 Route::get('/events', [App\Http\Controllers\EventAdminController::class, 'index'])->name('events.index');
 Route::get('/events/create', [App\Http\Controllers\EventAdminController::class, 'create'])->name('events.create');
+Route::get('/events/{event}', [App\Http\Controllers\EventAdminController::class, 'show'])->name('events.show');
 Route::get('/events/{event}/edit', [App\Http\Controllers\EventAdminController::class, 'edit'])->name('events.edit');
 Route::put('/events/{event}', [App\Http\Controllers\EventAdminController::class, 'update'])->name('events.update');
 Route::post('/events', [App\Http\Controllers\EventAdminController::class, 'store'])->name('events.store');
@@ -34,8 +35,10 @@ Route::get('/waypoints', [App\Http\Controllers\EventAdminController::class, 'get
 
 
 Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
-Route::post('/users/{id}/admin', [App\Http\Controllers\UserController::class, 'beAdmin'])->name('users.be.admin');
-Route::post('/users/{id}/not-admin', [App\Http\Controllers\UserController::class, 'quitAdmin'])->name('users.quit.admin');
+Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+Route::put('/users/{id}/admin', [App\Http\Controllers\UserController::class, 'beAdmin'])->name('users.be.admin');
+Route::put('/users/{id}/quit-admin', [App\Http\Controllers\UserController::class, 'quitAdmin'])->name('users.quit.admin');
 Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
 

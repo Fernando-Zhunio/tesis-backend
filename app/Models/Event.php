@@ -25,7 +25,9 @@ class Event extends Model
 
     protected function getIsFavoriteAttribute()
     {
-        return $this->hasBeenFavoritedBy(auth()->user());
+        /** @var User $user */
+        $user = auth()->user() ?? null;
+        return $user ? $this->hasBeenFavoritedBy($user): null;
     }
 
     public $cast = [
@@ -41,5 +43,13 @@ class Event extends Model
     {
         return 'fernando';
        return $this->hasFavorited($object) ? $this->unfavorite($object) : $this->favorite($object);
+    }
+
+    public function scopeSearch($builder, $search)
+    {
+        if($search) {
+            return $builder->where('name', 'like', "%$search%");
+        }
+        return $builder;
     }
 }

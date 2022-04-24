@@ -1,22 +1,24 @@
 <template>
   <form>
     <div class="form-group">
-      <label for="name">Nombre</label>
+      <label for="name">Nombre del evento:</label>
       <input
         required
         v-model="name"
         type="text"
+        placeholder="Escribe el nombre del evento"
         id="name"
         class="form-control"
         name="name"
       />
     </div>
-    <div class="row">
+    <div class="row my-3">
       <div class="form-group col-md-6 col-12">
-        <label for="description">Descripción</label>
+        <label for="description">Descripción:</label>
         <textarea
           required
           name="description"
+          placeholder="Escribe una descripción del evento"
           id="description"
           cols="30"
           rows="5"
@@ -27,8 +29,8 @@
       <div class="col-md-6 col-12 position-relative">
         <div class="form-group">
           <label for="image"
-            ><span class="btn btn-outline-info btn-create-image"
-              ><i class="far fa-plus-square"></i></span
+            ><span class="btn btn-info rounded-pill fw-bold btn-create-image"
+              ><i class="far fa-plus-square"></i> Agregar</span
           ></label>
           <input
             required
@@ -38,13 +40,13 @@
             @change="onFileChange"
           />
         </div>
-        <img :src="image.url" class="w-100 img-event" alt="image event" />
+        <img :src="image.url" class="w-100 img-event bg-dark rounded-20 shadow" alt="image event" />
         <button
           type="button"
-          class="btn btn-outline-danger btn-remove-image"
+          class="btn btn-danger rounded-pill fw-bold btn-remove-image"
           v-on:click="clearImage"
         >
-          <i class="far fa-trash-alt"></i>
+          <i class="far fa-trash-alt"></i> Eliminar
         </button>
       </div>
     </div>
@@ -75,7 +77,7 @@
           />
         </div>
       </div>
-      <div class="col-md-6 col-12 align-items-md-end d-md-flex">
+      <div class="col-md-6 col-12 align-items-md-end d-md-flex my-3">
         <div class="form-check">
           <input
             class="form-check-input"
@@ -85,7 +87,7 @@
             v-model="is_active"
           />
           <label class="form-check-label" for="flexCheckDefault">
-            Evento activo?
+            Evento activo? <span class="text-danger">importante!</span>
           </label>
         </div>
       </div>

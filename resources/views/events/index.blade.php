@@ -12,12 +12,16 @@
        }
    </style>
 @endsection
-@section('scripts')
+{{-- @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
-
+@endsection --}}
+@section('scripts')
+{{-- <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script> --}}
+    <script src="{{ asset('js/event.js') }}"></script>
 @endsection
 @section('content')
-    <div class="container">
+
+    {{-- <div class="container">
         <div class="display-3">Eventos</div>
         @if (!empty($events))
             <div data-masonry='{"percentPosition": true }' class="row">
@@ -47,9 +51,17 @@
                         </div>
                     </div>
                 @endforeach
+                <div class="d-flex justify-content-center">
+                    {!! $events->links('pagination::bootstrap-4') !!}
+                </div>
             </div>
         @else
 
         @endif
+    </div> --}}
+    <div id="app">
+        <events-list-component></events-list-component>
     </div>
 @endsection
+
+

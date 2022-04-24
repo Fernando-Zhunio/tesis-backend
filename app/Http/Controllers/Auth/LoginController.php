@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 // use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -42,10 +45,35 @@ class LoginController extends Controller
 
     public function authenticated(Request $request, $user)
     {
-        if(!$user->hasRole('super-admin')) {
+        if(!$user->hasRole('super-admin') && !$user->hasRole('admin')) {
             return $this->logout($request);
         }
-        // return $user;
-        // redirect()->route('logout');
+    }
+
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if(!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['El email no existe']
+            ]);
+        } else {
+            if (Hash::check($request->password, $user->password)) {;
+                if(!$user->hasRole('super-admin') && !$user->hasRole('admin')) {
+                    throw ValidationException::withMessages([
+                        'email' => ['Este usuario no tiene permisos para ingresar']
+                    ]);
+                }
+            } else {
+                throw ValidationException::withMessages([
+                    'password' => ['La contraseña no es correcta']
+                ]);
+            }
+        }
     }
 }

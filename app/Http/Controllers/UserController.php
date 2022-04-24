@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -20,12 +22,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        $search = request('search', null);
-        $page = request('page', 1);
+        // $search = request('search', null);
+        // $page = request('page', 1);
 
+        // $users = User::search($search)->with('roles')->orderBy('created_at', 'desc')->paginate();
+        // return view('users.index', compact('users'));
+        $search = request()->get('search', null);
         $users = User::search($search)->with('roles')->orderBy('created_at', 'desc')->paginate();
-        // return $users;
-        return view('users.index', compact('users'));
+        return request()->wantsJson()
+            ? new JsonResponse($users, 200)
+            :  view('users.index', compact('users'));
     }
 
     /**
@@ -35,7 +41,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
@@ -46,7 +52,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+            'is_student' => 'boolean',
+            'birthday' => 'required|date',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'is_student' => $request->get('is_student', 0),
+            'birthday' => $request->birthday,
+        ]);
+        $user->assignRole('user');
+        return redirect()->route('users.index')->with('success', 'User created successfully');
     }
 
     /**
@@ -91,35 +113,40 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if(auth()->user()->id == $id) {
-            return redirect()->route('users.index');
+        if (auth()->user()->id == $id) {
+            throw ValidationException::withMessages(['message' => 'Tu no puedes borrar tu propio usuario']);
         }
         $user = User::findOrFail($id);
         $user->delete();
-        return redirect()->route('users.index');
+        return request()->wantsJson()
+            ? new JsonResponse($user, 200)
+            : redirect()->route('users.index');
     }
 
     public function beAdmin($id)
     {
-        
+
         $user = User::findOrFail($id);
         if ($user->id == auth()->user()->id) {
-            return redirect()->route('users.index');
+            throw ValidationException::withMessages(['message' => 'Tu no puedes asignarte tu propio rol']);
         }
         $user->removeRole('user');
-        $user->assignRole('super-admin');
-        return redirect()->route('users.index');
+        $user->assignRole('admin');
+        return request()->wantsJson()
+                    ? new JsonResponse($user, 200)
+        : redirect()->route('users.index');
     }
 
     public function quitAdmin($id)
     {
         $user = User::findOrFail($id);
         if ($user->id == auth()->user()->id) {
-            return redirect()->route('users.index');
+            throw ValidationException::withMessages(['message' => 'Tu no puedes quitar tu propio rol de administrador']);
         }
-        $user->removeRole('super-admin');
+        $user->removeRole('admin');
         $user->assignRole('user');
-        return redirect()->route('users.index');
+        return request()->wantsJson()
+            ? new JsonResponse($user, 200)
+            : redirect()->route('users.index');
     }
-
 }
